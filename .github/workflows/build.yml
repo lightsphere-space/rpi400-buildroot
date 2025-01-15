@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+#  pull_request:
+#    branches:
+#      - main
 
 jobs:
   build:
@@ -33,18 +33,10 @@ jobs:
           sudo apt-get install -y build-essential bison flex libncurses5-dev \
             libssl-dev wget gawk git diffstat unzip texinfo bc
 
-      # Step 4: Set up Buildroot environment
-      - name: Set up Buildroot for Raspberry Pi 400
-        run: |
-          git clone https://github.com/buildroot/buildroot.git
-          cd buildroot
-          git checkout master  # or specify the version you want to use
-          make raspberrypi4_defconfig  # You can replace this with the RPI 400 defconfig if needed
-
       # Step 5: Build the image
       - name: Build Buildroot for Raspberry Pi 400
         run: |
-          cd buildroot
+          make raspberrypi4_defconfig  # You can replace this with the RPI 400 defconfig if needed
           make
 
       # Step 6: Upload the generated images to the release
@@ -52,7 +44,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            buildroot/output/images/*  # Adjust this path based on where your images are located
+            output/images/*  # Adjust this path based on where your images are located
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
