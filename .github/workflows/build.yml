@@ -1,0 +1,67 @@
+name: Build and Release Buildroot for Raspberry Pi 400
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Step 2: Set up caching to speed up dependencies and the build process
+      - name: Cache Buildroot
+        uses: actions/cache@v2
+        with:
+          path: ~/.buildroot-cache
+          key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
+          restore-keys: |
+            ${{ runner.os }}-buildroot-
+
+      # Step 3: Install dependencies for Buildroot
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bison flex libncurses5-dev \
+            libssl-dev wget gawk git diffstat unzip texinfo bc
+
+      # Step 4: Set up Buildroot environment
+      - name: Set up Buildroot for Raspberry Pi 400
+        run: |
+          git clone https://github.com/buildroot/buildroot.git
+          cd buildroot
+          git checkout master  # or specify the version you want to use
+          make raspberrypi4_defconfig  # You can replace this with the RPI 400 defconfig if needed
+
+      # Step 5: Build the image
+      - name: Build Buildroot for Raspberry Pi 400
+        run: |
+          cd buildroot
+          make
+
+      # Step 6: Upload the generated images to the release
+      - name: Upload Buildroot Image to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            buildroot/output/images/*  # Adjust this path based on where your images are located
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 7: Cache the build output for future runs
+      - name: Cache build artifacts
+        uses: actions/cache@v2
+        with:
+          path: buildroot/output
+          key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
+          restore-keys: |
+            ${{ runner.os }}-buildroot-
+
