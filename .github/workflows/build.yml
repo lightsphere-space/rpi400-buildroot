@@ -9,12 +9,12 @@ on:
 #  pull_request:
 #    branches:
 #      - main
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'Name of the person'
-        required: true
-        default: 'World'
+#   workflow_dispatch:
+#     inputs:
+#       name:
+#         description: 'Name of the person'
+#         required: true
+#         default: 'World'
 
 jobs:
   build:
@@ -26,6 +26,11 @@ jobs:
       # Step: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      # Step: Create non existing directories
+      - name: Initialize environment
+        run: |
+			mkdir -p ~/.buildroot-cache
 
       # Step: Set up caching to speed up dependencies and the build process
       - name: Cache Buildroot
@@ -53,7 +58,7 @@ jobs:
       - name: Cache build artifacts
         uses: actions/cache@v3
         with:
-          path: buildroot/output
+          path: rpi400-buildroot/rpi400-buildroot/output
           key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-
@@ -63,7 +68,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            output/images/*  # Adjust this path based on where your images are located
+            rpi400-buildroot/rpi400-buildroot/output/images/*  # Adjust this path based on where your images are located
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
