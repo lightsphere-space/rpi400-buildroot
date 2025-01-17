@@ -52,14 +52,13 @@ jobs:
             # Step: Build the image
             - name: Build Buildroot for Raspberry Pi 400
               run: |
-                  make raspberrypi4_defconfig  # You can replace this with the RPI 400 defconfig if needed
                   make
 
             # Step: Cache the build output for future runs
             - name: Cache build artifacts
               uses: actions/cache@v3
               with:
-                  path: $HOME/rpi400-buildroot/rpi400-buildroot/output
+                  path: $HOME/work/rpi400-buildroot/rpi400-buildroot/output
                   key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
                   restore-keys: |
                       ${{ runner.os }}-buildroot-
@@ -74,6 +73,6 @@ jobs:
               uses: softprops/action-gh-release@v2
               with:
                   files: |
-                      $HOME/rpi400-buildroot/rpi400-buildroot/output/images/*  # Adjust this path based on where your images are located
+                      $HOME/work/rpi400-buildroot/rpi400-buildroot/output/images/*  # Adjust this path based on where your images are located
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
