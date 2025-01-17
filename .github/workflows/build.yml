@@ -51,8 +51,20 @@ jobs:
 
             # Step: Build the image
             - name: Build Buildroot for Raspberry Pi 400
+              if: github.ref != 'refs/heads/develop'
               run: |
                   make
+
+            # Step: Build the image
+            - name: Simulate build
+              if: github.ref == 'refs/heads/develop'
+              run: |
+                  set -x
+                  mkdir -p output
+                  pwd
+                  echo " -------------- "
+                  ls -1
+                  set
 
             # Step: Cache the build output for future runs
             - name: Cache build artifacts
