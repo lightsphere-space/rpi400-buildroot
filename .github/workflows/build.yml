@@ -63,6 +63,10 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-buildroot-
 
+            - name: Debug filesystem
+              run: |
+                  find $HOME/ -maxdepth 4
+
             # Step: Upload the generated images to the release
             - name: Upload Buildroot Image to Release
               uses: softprops/action-gh-release@v2
