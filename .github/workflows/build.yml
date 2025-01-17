@@ -70,6 +70,7 @@ jobs:
 
             # Step: Upload the generated images to the release
             - name: Upload Buildroot Image to Release
+              if: github.ref != 'refs/heads/develop'
               uses: softprops/action-gh-release@v2
               with:
                   files: |
