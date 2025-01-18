@@ -1,74 +1,78 @@
 name: Build and Release Buildroot for Raspberry Pi 400
 
 on:
-    push:
-        branches:
-            - develop
-        #   - main
-        tags: # Trigger this workflow only when a tag is pushed
-            - "v*" # Example: v1.0.0
+  push:
+    branches:
+      - develop
+    tags: # Trigger this workflow only when a tag is pushed
+      - "v*" # Example: v1.0.0
 #  pull_request:
-#    branches:
-#      - main
+#  branches:
+#    - main
 #   workflow_dispatch:
-#     inputs:
-#       name:
-#         description: 'Name of the person'
-#         required: true
-#         default: 'World'
+#   inputs:
+#     name:
+#     description: 'Name of the person'
+#     required: true
+#     default: 'World'
 
 jobs:
-    build:
-        runs-on: ubuntu-24.04
-        permissions:
-            contents: write
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
 
-        steps:
-            # Step: Checkout the repository
-            - name: Checkout repository
-              uses: actions/checkout@v3
+    steps:
+      # Step: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-            # Step: Create non existing directories
-            - name: Initialize environment
-              run: |
-                  mkdir -p ~/.buildroot-cache
+      # Step: Create non existing directories
+      - name: Initialize environment
+        run: |
+          mkdir -p ~/.buildroot-cache
 
-            # Step: Set up caching to speed up dependencies and the build process
-            - name: Cache Buildroot
-              uses: actions/cache@v3
-              with:
-                  path: ~/.buildroot-cache
-                  key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
-                  restore-keys: |
-                      ${{ runner.os }}-buildroot-
+      # Step: Set up caching for Buildroot
+      - name: Cache Buildroot
+        uses: actions/cache@v3
+        with:
+          path: ~/.buildroot-cache
+          key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
+          restore-keys: |
+            ${{ runner.os }}-buildroot-
 
-            # Step: Install dependencies for Buildroot
-            - name: Install dependencies
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y build-essential bison flex libncurses5-dev \
-                    libssl-dev wget gawk git diffstat unzip texinfo bc
+      # Step: Install dependencies for Buildroot
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bison flex libncurses5-dev \
+            libssl-dev wget gawk git diffstat unzip texinfo bc
 
-            # Step: Build the image
-            - name: Build Buildroot for Raspberry Pi 400
-              run: |
-                  make
+      # Step: Build the image
+      - name: Build Buildroot for Raspberry Pi 400
+        run: |
+          make
 
-            # Step: Cache the build output for future runs
-            - name: Cache build artifacts
-              uses: actions/cache@v3
-              with:
-                  path: ~/work/rpi400-buildroot/rpi400-buildroot/output
-                  key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
-                  restore-keys: |
-                      ${{ runner.os }}-buildroot-
+      # Step: Cache the build output for future runs
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: ~/work/rpi400-buildroot/rpi400-buildroot/output
+          key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
+          restore-keys: |
+            ${{ runner.os }}-buildroot-
 
-            # Step: Upload the generated images to the release
-            - name: Upload Buildroot Image to Release
-              if: github.ref != 'refs/heads/develop'
-              uses: softprops/action-gh-release@v2
-              with:
-                  files: |
-                      ~/work/rpi400-buildroot/rpi400-buildroot/output/images/*  # Adjust this path based on where your images are located
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Step: Copy config file into images folder (so it's included in the release)
+      - name: Copy config to release folder
+        if: github.ref != 'refs/heads/develop'
+        run: |
+          cp ./config ~/work/rpi400-buildroot/rpi400-buildroot/output/images/config
+
+      # Step: Upload only the generated images (and config) to the release
+      - name: Upload Buildroot Image to Release
+        if: github.ref != 'refs/heads/develop'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ~/work/rpi400-buildroot/rpi400-buildroot/output/images/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
