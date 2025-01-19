@@ -22,7 +22,8 @@ jobs:
       - name: Initialize environment
         run: |
           mkdir -p ~/output
-          tree ~/
+          set
+          tree ~/work
 
       - name: Create Raspberry Pi image
         uses: aiqs4/rpi-buildroot@v1
