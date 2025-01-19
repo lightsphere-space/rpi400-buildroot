@@ -31,14 +31,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           build_cache_key: buildroot-test-${{ hashFiles('**/config') }}
           build_cache_restore_key: buildroot-test-
-          config_file: "~/work/rpi400-buildroot/rpi400-buildroot/buildroot_config"
-          output_path: "~/output/sdcard.img"
+          config_file: ${{ HOME }}/work/rpi400-buildroot/rpi400-buildroot/buildroot_config
+          output_path: ${{ HOME }}/output/sdcard.img
 
       # Step: Upload only the generated images (and config) to the release
       - name: Upload Buildroot Image to Release
         if: github.ref != 'refs/heads/develop'
         uses: softprops/action-gh-release@v2
         with:
-          files: ~/output/*
+          files: ${{ HOME }}/output/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
