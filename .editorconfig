@@ -38,3 +38,7 @@ indent_size = tab
 
 [*.adoc]
 trim_trailing_whitespace = false
+
+[.github/workflows/*]
+indent_style = space
+indent_size = 2
