@@ -34,11 +34,17 @@ jobs:
           build_cache_restore_key: buildroot-test-
           config_file: buildroot_config
           output_path: /home/runner/work/output/sdcard.img
+          buildroot_log_path: /home/runner/work/output/buildroot.log
 
       - name: debug
         run: |
           ls ~
           ls ~/output
+
+      - name: Output buildroot log
+        if: always()
+        run: |
+          cat /home/runner/work/output/buildroot.log
 
       # Step: Upload only the generated images (and config) to the release
       - name: Upload Buildroot Image to Release
