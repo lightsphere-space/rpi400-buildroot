@@ -64,9 +64,13 @@ jobs:
 
       # Step: Copy config file into images folder (so it's included in the release)
       - name: Copy config to release folder
-        if: github.ref != 'refs/heads/develop'
         run: |
           cp ./.config ~/work/rpi400-buildroot/rpi400-buildroot/output/images/.config
+
+      - name: debug
+        run: |
+          tree
+          ls -1R ~
 
       # Step: Upload only the generated images (and config) to the release
       - name: Upload Buildroot Image to Release
