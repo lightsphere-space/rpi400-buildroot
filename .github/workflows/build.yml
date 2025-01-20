@@ -5,16 +5,7 @@ on:
     # branches:
     #   - main
     tags: # Trigger this workflow only when a tag is pushed
-      - 'v*' # Example: v1.0.0
-#  pull_request:
-#    branches:
-#      - main
-  workflow_dispatch:
-    inputs:
-      name:
-        description: 'Name of the person'
-        required: true
-        default: 'World'
+      - "v*" # Example: v1.0.0
 
 jobs:
   build:
@@ -27,11 +18,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step: Create non existing directories
+      - name: Initialize environment
+        run: |
+          mkdir -p /home/runner/.buildroot-cache
+
       # Step: Set up caching to speed up dependencies and the build process
       - name: Cache Buildroot
         uses: actions/cache@v3
         with:
-          path: ~/.buildroot-cache
+          path: /home/runner/.buildroot-cache
           key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-
@@ -63,8 +59,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            output/images/*  # Adjust this path based on where your images are located
+            /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/*  # Adjust this path based on where your images are located
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
