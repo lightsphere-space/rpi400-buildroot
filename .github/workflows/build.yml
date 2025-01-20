@@ -22,15 +22,35 @@ jobs:
       - name: Initialize environment
         run: |
           mkdir -p /home/runner/.buildroot-cache
+          mkdir -p /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images
+          mkdir -p /home/runner/work/rpi400-buildroot/rpi400-buildroot/dl
 
       # Step: Set up caching to speed up dependencies and the build process
-      - name: Cache Buildroot
+      - name: Cache CCache
         uses: actions/cache@v3
         with:
           path: /home/runner/.buildroot-cache
           key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-
+
+      # Step: Cache the build output for future runs
+      - name: Cache Output
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/work/rpi400-buildroot/rpi400-buildroot/output
+          key: ${{ runner.os }}-buildroot-output-${{ hashFiles('**/config') }}
+          restore-keys: |
+            ${{ runner.os }}-buildroot-output-
+
+      # Step: Cache the build output for future runs
+      - name: Cache Downloads
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/work/rpi400-buildroot/rpi400-buildroot/dl
+          key: ${{ runner.os }}-buildroot-output-${{ hashFiles('**/config') }}
+          restore-keys: |
+            ${{ runner.os }}-buildroot-output-
 
       # Step: Install dependencies for Buildroot
       - name: Install dependencies
@@ -44,15 +64,7 @@ jobs:
         run: |
           make
           tree work/rpi400-buildroot
-
-      # Step: Cache the build output for future runs
-      - name: Cache build artifacts
-        uses: actions/cache@v3
-        with:
-          path: /home/runner/work/rpi400-buildroot/rpi400-buildroot/output
-          key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
-          restore-keys: |
-            ${{ runner.os }}-buildroot-
+          cp .config /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/
 
       # Step: Upload the generated images to the release
       - name: Upload Buildroot Image to Release
