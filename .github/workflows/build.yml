@@ -43,6 +43,7 @@ jobs:
       - name: Build Buildroot for Raspberry Pi 400
         run: |
           make
+          tree work/rpi400-buildroot
 
       # Step: Cache the build output for future runs
       - name: Cache build artifacts
