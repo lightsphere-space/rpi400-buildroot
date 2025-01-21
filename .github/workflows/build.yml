@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /home/runner/work/rpi400-buildroot/rpi400-buildroot/dl
-          key: ${{ runner.os }}-buildroot-output-${{ hashFiles('**/config') }}
+          key: ${{ runner.os }}-buildroot-dl-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-output-
 
