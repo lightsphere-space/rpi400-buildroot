@@ -68,7 +68,11 @@ jobs:
       - name: copy config to output
         continue-on-error: true
         run: |
-          cp .config /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/
+          cp .config /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/_config
+          pwd
+          ls
+          echo "===="
+          ls /home/runner/work/rpi400-buildroot/rpi400-buildroot
 
       # Step: Upload the generated images to the release
       - name: Upload Buildroot Image to Release
