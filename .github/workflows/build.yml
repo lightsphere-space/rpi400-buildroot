@@ -30,9 +30,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /home/runner/.buildroot-cache
-          key: ${{ runner.os }}-buildroot-${{ hashFiles('**/config') }}
+          key: ${{ runner.os }}-buildroot-cc-${{ hashFiles('**/config') }}
           restore-keys: |
-            ${{ runner.os }}-buildroot-
+            ${{ runner.os }}-buildroot-cc-
+            ${{ runner.os }}-buildroot-a163d01acb7772b5a473ef38ff12baa2d899340548f42e52c330756d8f3895e6
 
       # Step: Cache the build output for future runs
       - name: Cache Output
@@ -79,6 +80,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/*  # Adjust this path based on where your images are located
+            /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
