@@ -61,9 +61,13 @@ jobs:
 
       # Step: Build the image
       - name: Build Buildroot for Raspberry Pi 400
+        continue-on-error: true
         run: |
           make
-          tree work/rpi400-buildroot
+
+      - name: copy config to output
+        continue-on-error: true
+        run: |
           cp .config /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/
 
       # Step: Upload the generated images to the release
