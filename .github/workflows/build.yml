@@ -66,7 +66,7 @@ jobs:
       - name: Build Buildroot for Raspberry Pi 400
         continue-on-error: true
         run: |
-          make
+          make -s V=0
 
       - name: copy config to output
         continue-on-error: true
