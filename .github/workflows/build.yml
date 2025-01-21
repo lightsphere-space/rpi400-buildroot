@@ -30,28 +30,30 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /home/runner/.buildroot-cache
-          key: ${{ runner.os }}-buildroot-cc-${{ hashFiles('**/config') }}
+          key: buildroot-cc-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-cc-
-            ${{ runner.os }}-buildroot-a163d01acb7772b5a473ef38ff12baa2d899340548f42e52c330756d8f3895e6
+            buildroot-cc-
 
       # Step: Cache the build output for future runs
       - name: Cache Output
         uses: actions/cache@v3
         with:
           path: /home/runner/work/rpi400-buildroot/rpi400-buildroot/output
-          key: ${{ runner.os }}-buildroot-output-${{ hashFiles('**/config') }}
+          key: buildroot-output-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-output-
+            buildroot-output-
 
       # Step: Cache the build output for future runs
       - name: Cache Downloads
         uses: actions/cache@v3
         with:
           path: /home/runner/work/rpi400-buildroot/rpi400-buildroot/dl
-          key: ${{ runner.os }}-buildroot-dl-${{ hashFiles('**/config') }}
+          key: buildroot-dl-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-dl-
+            buildroot-dl-
 
       # Step: Install dependencies for Buildroot
       - name: Install dependencies
