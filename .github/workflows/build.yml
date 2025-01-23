@@ -21,7 +21,7 @@ jobs:
       # Step: Create non existing directories
       - name: Initialize environment
         run: |
-          mkdir -p /home/runner/.buildroot-cache
+          mkdir -p /home/runner/.buildroot-ccache
           mkdir -p /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images
           mkdir -p /home/runner/work/rpi400-buildroot/rpi400-buildroot/dl
 
@@ -29,7 +29,7 @@ jobs:
       - name: Cache CCache
         uses: actions/cache@v3
         with:
-          path: /home/runner/.buildroot-cache
+          path: /home/runner/.buildroot-ccache
           key: buildroot-cc-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-cc-
@@ -46,7 +46,7 @@ jobs:
             buildroot-output-
 
       # Step: Cache the build output for future runs
-      - name: Cache Downloads
+      - name: Cache Downloads & CCache
         uses: actions/cache@v3
         with:
           path: /home/runner/work/rpi400-buildroot/rpi400-buildroot/dl
@@ -66,7 +66,7 @@ jobs:
       - name: Build Buildroot for Raspberry Pi 400
         continue-on-error: true
         run: |
-          make syncconfig
+          make clean
           make -s V=0
 
       - name: copy config to output
@@ -99,3 +99,8 @@ jobs:
             ./output/images/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: clean before cachincg
+        if: always()
+        run: |
+          make clean
