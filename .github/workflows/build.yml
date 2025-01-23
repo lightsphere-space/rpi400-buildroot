@@ -21,7 +21,7 @@ jobs:
       # Step: Create non existing directories
       - name: Initialize environment
         run: |
-          mkdir -p /home/runner/.buildroot-cache
+          mkdir -p /home/runner/.buildroot-ccache
           mkdir -p /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images
           mkdir -p /home/runner/work/rpi400-buildroot/rpi400-buildroot/dl
 
@@ -29,7 +29,7 @@ jobs:
       - name: Cache CCache
         uses: actions/cache@v3
         with:
-          path: /home/runner/.buildroot-cache
+          path: /home/runner/.buildroot-ccache
           key: buildroot-cc-${{ hashFiles('**/config') }}
           restore-keys: |
             ${{ runner.os }}-buildroot-cc-
@@ -73,9 +73,8 @@ jobs:
         run: |
           cp .config /home/runner/work/rpi400-buildroot/rpi400-buildroot/output/images/_config
           pwd
-          ls
-          echo "===="
-          ls /home/runner/work/rpi400-buildroot/rpi400-buildroot
+          ls -a ~/
+          ls -1 ~/.buildroot-ccache
 
       - name: Fetch all tags
         run: |
