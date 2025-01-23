@@ -85,7 +85,7 @@ jobs:
         id: get-latest-tag
         run: |
           # Get the latest tag reachable from the branch
-          TAG=$(git describe --tags --abbrev=0)
+          TAG=$(git describe --always --tags --abbrev=0)
           echo "Latest tag: $TAG"
           echo "tag=$TAG" >> $GITHUB_ENV
 
